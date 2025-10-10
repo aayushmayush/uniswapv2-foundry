@@ -1,7 +1,7 @@
 
 ---
 
-# 🦄 Uniswap V2 Foundry — Router Deployment & Testing
+# 🦄 Uniswap V2 Foundry — Contracts, Deployment & Testing
 
 A full end-to-end re-implementation of **Uniswap V2** using **Foundry** in **solidity 0.8.30**.
 This project focuses to implement the uniswapv2 core and uniswapv2 periphery in a singlr repo — covering liquidity provision, removal, and all swap paths (single + multi-hop, token ↔ token ↔ ETH).

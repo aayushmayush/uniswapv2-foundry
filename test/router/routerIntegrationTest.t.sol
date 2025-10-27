@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "forge-std/Test.sol";
-import "../../script/router/DeployUniswapV2ViaRouter.s.sol"; // import the script
+import {Test,console} from  "forge-std/Test.sol";
+import  "../../script/router/DeployUniswapV2ViaRouter.s.sol"; // import the script
 
 contract UniswapV2IntegrationTestViaRouter is Test {
     DeployUniswapV2ViaRouter deploy;
@@ -35,7 +35,10 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         IERC20(AK).transfer(musk, 10000 ether);
         vm.deal(musk, 100 ether);
         vm.stopPrank();
-        console2.log(address(router));
+        console.log(address(router));
+        console.log("Take below INIT_CODE_PAIR_HASH and put it in hex present in UniswapV2Library.sol removing 0x from beginning");
+        console2.logBytes32(factory.INIT_CODE_PAIR_HASH());
+        
     }
 
     function testAddLiquidityPairCreatedToExpectedPair() public {

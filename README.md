@@ -49,6 +49,9 @@ aayushmayush07-uniswapv2-foundry/
 
   ```
 
+ 
+
+  
 ---
 
 ## 🚀 Deployment via Router Script
@@ -89,6 +92,25 @@ Router address:      0x...
 ```
 
 ---
+
+## Init Code Hash
+
+* Initial code pair hash is needed before using the code successfully in test or using cast. For that either use cast command to get the public INIT_CODE_HASH_VARIABLE (in UniswapV2Factory.sol) after deployment or 
+
+  ```bash
+  #run below command
+  forge test test/router/routerIntegrationTest.t.sol  -vvv
+
+  #you will get something like  below
+
+  #Take below INIT_CODE_PAIR_HASH and put it in hex present in UniswapV2Library.sol removing 0x from beginning 0x661cd7b53f97d9a236aa55ba2f999ba943e196d5017547d53bfa76e9feda1224
+  ```
+
+ After getting the hash remove 0x from start of hex and put in UniswapV2Library.sol as shown in the image. 
+ 
+ ![Alt text](./assets/image.png)
+
+
 
 ## 🧪 Running Tests
 

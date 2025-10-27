@@ -27,25 +27,25 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
     // ) external returns (uint amountETH);
 
     function swapExactTokensForTokensSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
+        uint256 amountIn,
+        uint256 amountOutMin,
         address[] calldata path,
         address to,
-        uint deadline
+        uint256 deadline
     ) external;
 
     function swapExactETHForTokensSupportingFeeOnTransferTokens(
-        uint amountOutMin,
+        uint256 amountOutMin,
         address[] calldata path,
         address to,
-        uint deadline
+        uint256 deadline
     ) external payable;
 
     function swapExactTokensForETHSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
+        uint256 amountIn,
+        uint256 amountOutMin,
         address[] calldata path,
         address to,
-        uint deadline
+        uint256 deadline
     ) external;
 }

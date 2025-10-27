@@ -48,18 +48,18 @@ contract UniswapV2IntegrationTest is Test {
         // Step 1: send tokens to pair
         ETH.transfer(address(pair), 10 ether);
         USDC.transfer(address(pair), 100 ether);
-        (uint112 r0Before, uint112 r1Before, ) = pair.getReserves();
+        (uint112 r0Before, uint112 r1Before,) = pair.getReserves();
         assertEq(r0Before, 0);
         assertEq(r1Before, 0);
         assertEq(pair.kLast(), 0);
 
         // Step 2: call mint to mint LP tokens
-        uint liquidity = pair.mint(alice);
+        uint256 liquidity = pair.mint(alice);
 
         // Assertions
         assertGt(liquidity, 0, "Liquidity should be > 0");
 
-        (uint112 r0, uint112 r1, ) = pair.getReserves();
+        (uint112 r0, uint112 r1,) = pair.getReserves();
         // Check order dynamically
         if (pair.token0() == address(ETH)) {
             assertEq(r0, 10 ether, "Reserve0 should equal ETH deposited");
@@ -69,11 +69,7 @@ contract UniswapV2IntegrationTest is Test {
             assertEq(r1, 10 ether, "Reserve1 should equal ETH deposited");
         }
 
-        assertEq(
-            pair.balanceOf(alice),
-            liquidity,
-            "Alice should have LP tokens"
-        );
+        assertEq(pair.balanceOf(alice), liquidity, "Alice should have LP tokens");
 
         vm.stopPrank();
     }
@@ -89,18 +85,18 @@ contract UniswapV2IntegrationTest is Test {
         // Step 1: send tokens to pair
         ETH.transfer(address(pair), 10 ether);
         USDC.transfer(address(pair), 100 ether);
-        (uint112 r0Before, uint112 r1Before, ) = pair.getReserves();
+        (uint112 r0Before, uint112 r1Before,) = pair.getReserves();
         assertEq(r0Before, 0);
         assertEq(r1Before, 0);
         assertEq(pair.kLast(), 0);
 
         // Step 2: call mint to mint LP tokens
-        uint liquidity = pair.mint(alice);
+        uint256 liquidity = pair.mint(alice);
 
         // Assertions
         assertGt(liquidity, 0, "Liquidity should be > 0");
 
-        (uint112 r0, uint112 r1, ) = pair.getReserves();
+        (uint112 r0, uint112 r1,) = pair.getReserves();
         // Check order dynamically
         if (pair.token0() == address(ETH)) {
             assertEq(r0, 10 ether, "Reserve0 should equal ETH deposited");
@@ -110,27 +106,19 @@ contract UniswapV2IntegrationTest is Test {
             assertEq(r1, 10 ether, "Reserve1 should equal ETH deposited");
         }
 
-        assertEq(
-            pair.balanceOf(alice),
-            liquidity,
-            "Alice should have LP tokens"
-        );
+        assertEq(pair.balanceOf(alice), liquidity, "Alice should have LP tokens");
 
         vm.stopPrank();
 
         vm.startPrank(alice);
-        uint balanceOfAlice = pair.balanceOf(alice);
+        uint256 balanceOfAlice = pair.balanceOf(alice);
         ETH.transfer(address(pair), 10 ether);
         USDC.transfer(address(pair), 1 ether);
-        uint liquidityTwice = pair.mint(alice);
+        uint256 liquidityTwice = pair.mint(alice);
         // Assertions
         assertGt(liquidityTwice, 0, "Liquidity should be > 0");
 
-        assertEq(
-            pair.balanceOf(alice),
-            balanceOfAlice + liquidityTwice,
-            "Alice should have LP tokens"
-        );
+        assertEq(pair.balanceOf(alice), balanceOfAlice + liquidityTwice, "Alice should have LP tokens");
     }
 
     function testAddLiquidityAndMintThenBurn() public {
@@ -144,18 +132,18 @@ contract UniswapV2IntegrationTest is Test {
         // Step 1: send tokens to pair
         ETH.transfer(address(pair), 10 ether);
         USDC.transfer(address(pair), 100 ether);
-        (uint112 r0Before, uint112 r1Before, ) = pair.getReserves();
+        (uint112 r0Before, uint112 r1Before,) = pair.getReserves();
         assertEq(r0Before, 0);
         assertEq(r1Before, 0);
         assertEq(pair.kLast(), 0);
 
         // Step 2: call mint to mint LP tokens
-        uint liquidity = pair.mint(alice);
+        uint256 liquidity = pair.mint(alice);
 
         // Assertions
         assertGt(liquidity, 0, "Liquidity should be > 0");
 
-        (uint112 r0, uint112 r1, ) = pair.getReserves();
+        (uint112 r0, uint112 r1,) = pair.getReserves();
         // Check order dynamically
         if (pair.token0() == address(ETH)) {
             assertEq(r0, 10 ether, "Reserve0 should equal ETH deposited");
@@ -165,12 +153,8 @@ contract UniswapV2IntegrationTest is Test {
             assertEq(r1, 10 ether, "Reserve1 should equal ETH deposited");
         }
 
-        assertEq(
-            pair.balanceOf(alice),
-            liquidity,
-            "Alice should have LP tokens"
-        );
-        uint nowBalanceOfAlice = pair.balanceOf(alice);
+        assertEq(pair.balanceOf(alice), liquidity, "Alice should have LP tokens");
+        uint256 nowBalanceOfAlice = pair.balanceOf(alice);
         pair.transfer(address(pair), 1e19);
 
         pair.burn(alice);
@@ -191,18 +175,18 @@ contract UniswapV2IntegrationTest is Test {
         // Step 1: send tokens to pair
         ETH.transfer(address(pair), 10 ether);
         USDC.transfer(address(pair), 100 ether);
-        (uint112 r0Before, uint112 r1Before, ) = pair.getReserves();
+        (uint112 r0Before, uint112 r1Before,) = pair.getReserves();
         assertEq(r0Before, 0);
         assertEq(r1Before, 0);
         assertEq(pair.kLast(), 0);
 
         // Step 2: call mint to mint LP tokens
-        uint liquidity = pair.mint(alice);
+        uint256 liquidity = pair.mint(alice);
 
         // Assertions
         assertGt(liquidity, 0, "Liquidity should be > 0");
 
-        (uint112 r0, uint112 r1, ) = pair.getReserves();
+        (uint112 r0, uint112 r1,) = pair.getReserves();
         // Check order dynamically
         if (pair.token0() == address(ETH)) {
             assertEq(r0, 10 ether, "Reserve0 should equal ETH deposited");
@@ -212,27 +196,23 @@ contract UniswapV2IntegrationTest is Test {
             assertEq(r1, 10 ether, "Reserve1 should equal ETH deposited");
         }
 
-        assertEq(
-            pair.balanceOf(alice),
-            liquidity,
-            "Alice should have LP tokens"
-        );
+        assertEq(pair.balanceOf(alice), liquidity, "Alice should have LP tokens");
 
         vm.stopPrank();
 
         // Aayush swaps 10 ETH -> USDC
         vm.startPrank(aayushSwapper);
 
-        uint usdcBefore = USDC.balanceOf(aayushSwapper);
+        uint256 usdcBefore = USDC.balanceOf(aayushSwapper);
 
         // transfer ETH to pair
         ETH.transfer(address(pair), 10 ether);
 
         // calculate expected output
-        (uint112 r0AtSwap, uint112 r1AtSwap, ) = pair.getReserves();
-        uint amountIn = 10 ether;
-        uint reserveIn;
-        uint reserveOut;
+        (uint112 r0AtSwap, uint112 r1AtSwap,) = pair.getReserves();
+        uint256 amountIn = 10 ether;
+        uint256 reserveIn;
+        uint256 reserveOut;
 
         if (pair.token0() == address(ETH)) {
             reserveIn = r0AtSwap;
@@ -242,33 +222,29 @@ contract UniswapV2IntegrationTest is Test {
             reserveOut = r0AtSwap;
         }
 
-        uint expectedOut = getAmountOut(amountIn, reserveIn, reserveOut);
+        uint256 expectedOut = getAmountOut(amountIn, reserveIn, reserveOut);
 
         // do the swap
-        uint amount0Out = pair.token0() == address(ETH) ? 0 : expectedOut;
-        uint amount1Out = pair.token0() == address(ETH) ? expectedOut : 0;
+        uint256 amount0Out = pair.token0() == address(ETH) ? 0 : expectedOut;
+        uint256 amount1Out = pair.token0() == address(ETH) ? expectedOut : 0;
 
         pair.swap(amount0Out, amount1Out, aayushSwapper, new bytes(0));
 
-        uint usdcAfter = USDC.balanceOf(aayushSwapper);
+        uint256 usdcAfter = USDC.balanceOf(aayushSwapper);
 
-        assertEq(
-            usdcAfter - usdcBefore,
-            expectedOut,
-            "Aayush should get correct USDC"
-        );
+        assertEq(usdcAfter - usdcBefore, expectedOut, "Aayush should get correct USDC");
 
         vm.stopPrank();
     }
 
-    function getAmountOut(
-        uint amountIn,
-        uint reserveIn,
-        uint reserveOut
-    ) internal pure returns (uint amountOut) {
-        uint amountInWithFee = amountIn * 997;
-        uint numerator = amountInWithFee * reserveOut;
-        uint denominator = reserveIn * 1000 + amountInWithFee;
+    function getAmountOut(uint256 amountIn, uint256 reserveIn, uint256 reserveOut)
+        internal
+        pure
+        returns (uint256 amountOut)
+    {
+        uint256 amountInWithFee = amountIn * 997;
+        uint256 numerator = amountInWithFee * reserveOut;
+        uint256 denominator = reserveIn * 1000 + amountInWithFee;
         amountOut = numerator / denominator;
     }
 }

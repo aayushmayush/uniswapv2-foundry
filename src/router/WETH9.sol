@@ -8,11 +8,7 @@ contract WETH {
     string public constant symbol = "WETH";
     uint8 public constant decimals = 18;
 
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
+    event Approval(address indexed owner, address indexed spender, uint256 value);
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Deposit(address indexed to, uint256 value);
     event Withdrawal(address indexed from, uint256 value);
@@ -47,7 +43,7 @@ contract WETH {
         emit Withdrawal(msg.sender, wad);
         emit Transfer(msg.sender, address(0), wad); // ERC20-style burn event
 
-        (bool ok, ) = msg.sender.call{value: wad}("");
+        (bool ok,) = msg.sender.call{value: wad}("");
         require(ok, "WETH: ETH transfer failed");
     }
 
@@ -66,11 +62,7 @@ contract WETH {
         return transferFrom(msg.sender, to, wad);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 wad
-    ) public returns (bool) {
+    function transferFrom(address from, address to, uint256 wad) public returns (bool) {
         require(balanceOf[from] >= wad, "WETH: insufficient balance");
 
         if (from != msg.sender) {

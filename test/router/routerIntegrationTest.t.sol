@@ -39,11 +39,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
     }
 
     function testAddLiquidityPairCreatedToExpectedPair() public {
-        expected_pair = UniswapV2Library.pairFor(
-            address(factory),
-            address(USDC),
-            address(AK)
-        );
+        expected_pair = UniswapV2Library.pairFor(address(factory), address(USDC), address(AK));
         vm.startPrank(deployer);
 
         USDC.approve(address(router), 100 ether);
@@ -85,38 +81,23 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         vm.stopPrank();
         address pairy = factory.getPair(address(USDC), address(AK));
         pair = IUniswapV2Pair(pairy);
-        (uint reserve0, uint reserve1, ) = pair.getReserves();
-        (uint reserveA, uint reserveB) = address(USDC) < address(AK)
-            ? (reserve0, reserve1)
-            : (reserve1, reserve0);
+        (uint256 reserve0, uint256 reserve1,) = pair.getReserves();
+        (uint256 reserveA, uint256 reserveB) = address(USDC) < address(AK) ? (reserve0, reserve1) : (reserve1, reserve0);
 
         assertEq(reserveA, 10 ether);
         assertEq(reserveB, 100 ether);
-        assertApproxEqAbs(
-            pair.totalSupply(),
-            Math.sqrt(100 ether * 10 ether),
-            1e6
-        );
+        assertApproxEqAbs(pair.totalSupply(), Math.sqrt(100 ether * 10 ether), 1e6);
     }
 
     function testAddLiquidityETHPairCreatedToExpectedPair() public {
-        expected_pair = UniswapV2Library.pairFor(
-            address(factory),
-            address(USDC),
-            address(weth)
-        );
+        expected_pair = UniswapV2Library.pairFor(address(factory), address(USDC), address(weth));
 
         vm.startPrank(deployer);
 
         USDC.approve(address(router), 100 ether);
 
         router.addLiquidityETH{value: 1 ether}(
-            address(USDC),
-            10 ether,
-            9 ether,
-            1 ether,
-            address(deployer),
-            _getDeadlineAfter20Minutes()
+            address(USDC), 10 ether, 9 ether, 1 ether, address(deployer), _getDeadlineAfter20Minutes()
         );
 
         vm.stopPrank();
@@ -130,62 +111,40 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         USDC.approve(address(router), 100 ether);
 
         router.addLiquidityETH{value: 1 ether}(
-            address(USDC),
-            10 ether,
-            9 ether,
-            1 ether,
-            address(deployer),
-            _getDeadlineAfter20Minutes()
+            address(USDC), 10 ether, 9 ether, 1 ether, address(deployer), _getDeadlineAfter20Minutes()
         );
 
         vm.stopPrank();
         address pairy = factory.getPair(address(USDC), address(weth));
         pair = IUniswapV2Pair(pairy);
-        (uint reserve0, uint reserve1, ) = pair.getReserves();
-        (uint reserveA, uint reserveB) = address(USDC) < address(weth)
-            ? (reserve0, reserve1)
-            : (reserve1, reserve0);
+        (uint256 reserve0, uint256 reserve1,) = pair.getReserves();
+        (uint256 reserveA, uint256 reserveB) =
+            address(USDC) < address(weth) ? (reserve0, reserve1) : (reserve1, reserve0);
 
         assertEq(reserveA, 10 ether);
         assertEq(reserveB, 1 ether);
-        assertApproxEqAbs(
-            pair.totalSupply(),
-            Math.sqrt(10 ether * 1 ether),
-            1e6
-        );
+        assertApproxEqAbs(pair.totalSupply(), Math.sqrt(10 ether * 1 ether), 1e6);
     }
 
-    function testAddLiquidityETHReservesAfterAddingLiquidityWithNonDeployer()
-        public
-    {
+    function testAddLiquidityETHReservesAfterAddingLiquidityWithNonDeployer() public {
         vm.startPrank(musk);
 
         USDC.approve(address(router), 100 ether);
 
         router.addLiquidityETH{value: 1 ether}(
-            address(USDC),
-            10 ether,
-            9 ether,
-            1 ether,
-            address(musk),
-            _getDeadlineAfter20Minutes()
+            address(USDC), 10 ether, 9 ether, 1 ether, address(musk), _getDeadlineAfter20Minutes()
         );
 
         vm.stopPrank();
         address pairy = factory.getPair(address(USDC), address(weth));
         pair = IUniswapV2Pair(pairy);
-        (uint reserve0, uint reserve1, ) = pair.getReserves();
-        (uint reserveA, uint reserveB) = address(USDC) < address(weth)
-            ? (reserve0, reserve1)
-            : (reserve1, reserve0);
+        (uint256 reserve0, uint256 reserve1,) = pair.getReserves();
+        (uint256 reserveA, uint256 reserveB) =
+            address(USDC) < address(weth) ? (reserve0, reserve1) : (reserve1, reserve0);
 
         assertEq(reserveA, 10 ether);
         assertEq(reserveB, 1 ether);
-        assertApproxEqAbs(
-            pair.totalSupply(),
-            Math.sqrt(10 ether * 1 ether),
-            1e6
-        );
+        assertApproxEqAbs(pair.totalSupply(), Math.sqrt(10 ether * 1 ether), 1e6);
         assertEq(IERC20(USDC).balanceOf(musk), 990 ether);
     }
 
@@ -209,49 +168,29 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         vm.stopPrank();
 
         address pairy = factory.getPair(address(USDC), address(AK));
-        console2.log(
-            "Lp tokens before deployment",
-            UniswapV2Pair(pairy).balanceOf(address(deployer))
-        );
+        console2.log("Lp tokens before deployment", UniswapV2Pair(pairy).balanceOf(address(deployer)));
         vm.startPrank(address(deployer));
 
-        uint liquidity = UniswapV2Pair(pairy).balanceOf(address(deployer));
-        uint pre_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
-        uint pre_balance_AK = IERC20(AK).balanceOf(address(deployer));
-        uint balance0 = IERC20(USDC).balanceOf(address(pairy));
-        uint balance1 = IERC20(AK).balanceOf(address(pairy));
-        (uint balanceA, uint balanceB) = address(USDC) < address(AK)
-            ? (balance0, balance1)
-            : (balance1, balance0);
-        uint _totalSupply = UniswapV2Pair(pairy).totalSupply();
+        uint256 liquidity = UniswapV2Pair(pairy).balanceOf(address(deployer));
+        uint256 pre_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
+        uint256 pre_balance_AK = IERC20(AK).balanceOf(address(deployer));
+        uint256 balance0 = IERC20(USDC).balanceOf(address(pairy));
+        uint256 balance1 = IERC20(AK).balanceOf(address(pairy));
+        (uint256 balanceA, uint256 balanceB) = address(USDC) < address(AK) ? (balance0, balance1) : (balance1, balance0);
+        uint256 _totalSupply = UniswapV2Pair(pairy).totalSupply();
         UniswapV2Pair(pairy).approve(address(router), type(uint256).max);
 
         router.removeLiquidity(
-            address(USDC),
-            address(AK),
-            10 ether,
-            1 ether,
-            1 ether,
-            address(deployer),
-            _getDeadlineAfter20Minutes()
+            address(USDC), address(AK), 10 ether, 1 ether, 1 ether, address(deployer), _getDeadlineAfter20Minutes()
         );
         vm.stopPrank();
-        uint post_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
-        uint post_balance_AK = IERC20(AK).balanceOf(address(deployer));
+        uint256 post_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
+        uint256 post_balance_AK = IERC20(AK).balanceOf(address(deployer));
 
-        assertEq(
-            post_balance_USDC - pre_balance_USDC,
-            (10 ether * balanceA) / _totalSupply
-        );
-        assertEq(
-            post_balance_AK - pre_balance_AK,
-            (10 ether * balanceB) / _totalSupply
-        );
+        assertEq(post_balance_USDC - pre_balance_USDC, (10 ether * balanceA) / _totalSupply);
+        assertEq(post_balance_AK - pre_balance_AK, (10 ether * balanceB) / _totalSupply);
 
-        console2.log(
-            "Lp tokens after deployment",
-            UniswapV2Pair(pairy).balanceOf(address(deployer))
-        );
+        console2.log("Lp tokens after deployment", UniswapV2Pair(pairy).balanceOf(address(deployer)));
     }
 
     function testRemoveLiquidityWithPermit() public {
@@ -276,19 +215,14 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         pair = IUniswapV2Pair(pairy);
 
         // Sign permit for the exact LP liquidity we will remove
-        uint liquidity = UniswapV2Pair(pairy).balanceOf(address(deployer));
-        (uint8 v, bytes32 r, bytes32 s) = _signForApprovalByDeployer(
-            pairy,
-            10 ether
-        );
-        uint pre_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
-        uint pre_balance_AK = IERC20(AK).balanceOf(address(deployer));
-        uint balance0 = IERC20(USDC).balanceOf(address(pairy));
-        uint balance1 = IERC20(AK).balanceOf(address(pairy));
-        (uint balanceA, uint balanceB) = address(USDC) < address(AK)
-            ? (balance0, balance1)
-            : (balance1, balance0);
-        uint _totalSupply = UniswapV2Pair(pairy).totalSupply();
+        uint256 liquidity = UniswapV2Pair(pairy).balanceOf(address(deployer));
+        (uint8 v, bytes32 r, bytes32 s) = _signForApprovalByDeployer(pairy, 10 ether);
+        uint256 pre_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
+        uint256 pre_balance_AK = IERC20(AK).balanceOf(address(deployer));
+        uint256 balance0 = IERC20(USDC).balanceOf(address(pairy));
+        uint256 balance1 = IERC20(AK).balanceOf(address(pairy));
+        (uint256 balanceA, uint256 balanceB) = address(USDC) < address(AK) ? (balance0, balance1) : (balance1, balance0);
+        uint256 _totalSupply = UniswapV2Pair(pairy).totalSupply();
 
         router.removeLiquidityWithPermit(
             address(USDC),
@@ -305,22 +239,13 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         );
         vm.stopPrank();
 
-        uint post_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
-        uint post_balance_AK = IERC20(AK).balanceOf(address(deployer));
+        uint256 post_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
+        uint256 post_balance_AK = IERC20(AK).balanceOf(address(deployer));
 
-        assertEq(
-            post_balance_USDC - pre_balance_USDC,
-            (10 ether * balanceA) / _totalSupply
-        );
-        assertEq(
-            post_balance_AK - pre_balance_AK,
-            (10 ether * balanceB) / _totalSupply
-        );
+        assertEq(post_balance_USDC - pre_balance_USDC, (10 ether * balanceA) / _totalSupply);
+        assertEq(post_balance_AK - pre_balance_AK, (10 ether * balanceB) / _totalSupply);
 
-        console2.log(
-            "Lp tokens after deployment",
-            UniswapV2Pair(pairy).balanceOf(address(deployer))
-        );
+        console2.log("Lp tokens after deployment", UniswapV2Pair(pairy).balanceOf(address(deployer)));
     }
 
     function testRemoveLiquidityETHWithPermit() public {
@@ -330,12 +255,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         USDC.approve(address(router), 100 ether);
 
         router.addLiquidityETH{value: 1 ether}(
-            address(USDC),
-            10 ether,
-            9 ether,
-            1 ether,
-            address(deployer),
-            _getDeadlineAfter20Minutes()
+            address(USDC), 10 ether, 9 ether, 1 ether, address(deployer), _getDeadlineAfter20Minutes()
         );
 
         // Get pair
@@ -343,41 +263,28 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         pair = IUniswapV2Pair(pairy);
 
         // Sign permit for the exact LP liquidity we will remove
-        uint liquidity = UniswapV2Pair(pairy).balanceOf(address(deployer));
-        (uint8 v, bytes32 r, bytes32 s) = _signForApprovalByDeployer(
-            pairy,
-            liquidity
-        );
+        uint256 liquidity = UniswapV2Pair(pairy).balanceOf(address(deployer));
+        (uint8 v, bytes32 r, bytes32 s) = _signForApprovalByDeployer(pairy, liquidity);
 
         // Pre balances
-        uint pre_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
-        uint pre_balance_ETH = address(deployer).balance; // ETH (native)
-        uint balance0 = IERC20(USDC).balanceOf(address(pairy));
-        uint balance1 = WETH(weth).balanceOf(address(pairy)); // WETH stored in pair
-        (uint balanceA, uint balanceB) = address(USDC) < address(weth)
-            ? (balance0, balance1)
-            : (balance1, balance0);
-        uint _totalSupply = UniswapV2Pair(pairy).totalSupply();
+        uint256 pre_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
+        uint256 pre_balance_ETH = address(deployer).balance; // ETH (native)
+        uint256 balance0 = IERC20(USDC).balanceOf(address(pairy));
+        uint256 balance1 = WETH(weth).balanceOf(address(pairy)); // WETH stored in pair
+        (uint256 balanceA, uint256 balanceB) =
+            address(USDC) < address(weth) ? (balance0, balance1) : (balance1, balance0);
+        uint256 _totalSupply = UniswapV2Pair(pairy).totalSupply();
 
         // Call removeLiquidityETHWithPermit (router unwraps WETH -> ETH to deployer)
         router.removeLiquidityETHWithPermit(
-            address(USDC),
-            liquidity,
-            0,
-            0,
-            address(deployer),
-            _getDeadlineAfter20Minutes(),
-            false,
-            v,
-            r,
-            s
+            address(USDC), liquidity, 0, 0, address(deployer), _getDeadlineAfter20Minutes(), false, v, r, s
         );
 
         vm.stopPrank();
 
         // Post balances
-        uint post_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
-        uint post_balance_ETH = address(deployer).balance;
+        uint256 post_balance_USDC = IERC20(USDC).balanceOf(address(deployer));
+        uint256 post_balance_ETH = address(deployer).balance;
 
         // Exact share assertions (same math as token remove test)
         // assertEq(
@@ -389,10 +296,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         //     (liquidity * balanceB) / _totalSupply
         // );
 
-        console2.log(
-            "Lp tokens after deployment",
-            UniswapV2Pair(pairy).balanceOf(address(deployer))
-        );
+        console2.log("Lp tokens after deployment", UniswapV2Pair(pairy).balanceOf(address(deployer)));
     }
 
     //swap tests
@@ -415,7 +319,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
 
         vm.stopPrank();
 
-        uint pre_balance_AK_musk = IERC20(AK).balanceOf(musk);
+        uint256 pre_balance_AK_musk = IERC20(AK).balanceOf(musk);
         vm.startPrank(musk);
         IERC20(USDC).approve(address(router), type(uint256).max);
 
@@ -426,15 +330,9 @@ contract UniswapV2IntegrationTestViaRouter is Test {
 
         console2.log("The zero path is", path[0]);
 
-        router.swapTokensForExactTokens(
-            10 ether,
-            2 ether,
-            path,
-            address(musk),
-            _getDeadlineAfter20Minutes()
-        );
+        router.swapTokensForExactTokens(10 ether, 2 ether, path, address(musk), _getDeadlineAfter20Minutes());
 
-        uint post_balance_AK_musk = IERC20(AK).balanceOf(musk);
+        uint256 post_balance_AK_musk = IERC20(AK).balanceOf(musk);
         vm.stopPrank();
 
         assertEq(post_balance_AK_musk - pre_balance_AK_musk, 10 ether);
@@ -463,7 +361,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         IERC20(AK).approve(address(router), type(uint256).max);
 
         // Get pre ETH balance
-        uint pre_eth_balance = musk.balance;
+        uint256 pre_eth_balance = musk.balance;
 
         // Path: AK → WETH
         address[] memory path = new address[](2);
@@ -480,16 +378,13 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         );
 
         // Post ETH balance
-        uint post_eth_balance = musk.balance;
+        uint256 post_eth_balance = musk.balance;
         vm.stopPrank();
 
         // 3️⃣ Assert Musk received ETH
         assertGt(post_eth_balance, pre_eth_balance, "ETH not received");
 
-        console2.log(
-            "ETH received from AKETH swap:",
-            post_eth_balance - pre_eth_balance
-        );
+        console2.log("ETH received from AKETH swap:", post_eth_balance - pre_eth_balance);
     }
 
     function testSwapExactTokensForTokensMultiPath() public {
@@ -529,7 +424,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         vm.stopPrank();
 
         // 4️⃣ Musk swaps AK → RAMI through USDC
-        uint pre_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
+        uint256 pre_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
         vm.startPrank(musk);
 
         // Musk gets some AK to start
@@ -550,14 +445,10 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         );
 
         vm.stopPrank();
-        uint post_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
+        uint256 post_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
 
         // 5️⃣ Assertion: Musk should receive some RAMI
-        assertGt(
-            post_balance_RAMIMusk,
-            pre_balance_RAMIMusk,
-            "RAMI not received"
-        );
+        assertGt(post_balance_RAMIMusk, pre_balance_RAMIMusk, "RAMI not received");
     }
 
     function testSwapExactTokensForTokensViaETHMultiPath() public {
@@ -593,7 +484,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         vm.stopPrank();
 
         // 4️⃣ Musk swaps AK → WETH → RAMI
-        uint pre_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
+        uint256 pre_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
         vm.startPrank(musk);
 
         // Musk gets AK
@@ -616,19 +507,12 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         );
 
         vm.stopPrank();
-        uint post_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
+        uint256 post_balance_RAMIMusk = IERC20(address(RAMI)).balanceOf(musk);
 
         // 5️⃣ Assertion
-        assertGt(
-            post_balance_RAMIMusk,
-            pre_balance_RAMIMusk,
-            "RAMI not received"
-        );
+        assertGt(post_balance_RAMIMusk, pre_balance_RAMIMusk, "RAMI not received");
 
-        console2.log(
-            "RAMI received after AKETHRAMI swap:",
-            post_balance_RAMIMusk - pre_balance_RAMIMusk
-        );
+        console2.log("RAMI received after AKETHRAMI swap:", post_balance_RAMIMusk - pre_balance_RAMIMusk);
     }
 
     function testSwapTokensForExactETH_MultiPath() public {
@@ -666,7 +550,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
 
         IERC20(AK).approve(address(router), type(uint256).max);
 
-        uint preEthBalance = musk.balance;
+        uint256 preEthBalance = musk.balance;
 
         // Path: AK → USDC → WETH
         address[] memory path = new address[](3);
@@ -675,7 +559,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         path[2] = address(weth);
 
         // 4️⃣ Execute swap: Musk swaps AK for EXACT ETH
-        uint ethOutTarget = 2 ether; // Musk wants exactly 2 ETH
+        uint256 ethOutTarget = 2 ether; // Musk wants exactly 2 ETH
         router.swapTokensForExactETH(
             ethOutTarget, // exact ETH out
             100 ether, // max AK input Musk is willing to spend
@@ -687,14 +571,9 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         vm.stopPrank();
 
         // 5️⃣ Verify results
-        uint postEthBalance = musk.balance;
+        uint256 postEthBalance = musk.balance;
         assertGt(postEthBalance, preEthBalance, "ETH not received");
-        assertApproxEqAbs(
-            postEthBalance - preEthBalance,
-            2 ether,
-            0.001 ether,
-            "ETH amount mismatch"
-        );
+        assertApproxEqAbs(postEthBalance - preEthBalance, 2 ether, 0.001 ether, "ETH amount mismatch");
 
         console2.log("ETH received:", postEthBalance - preEthBalance);
     }
@@ -718,7 +597,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
 
         // 2️⃣ Musk swaps ETH → AK
         vm.startPrank(musk);
-        uint preAKBalance = IERC20(AK).balanceOf(musk);
+        uint256 preAKBalance = IERC20(AK).balanceOf(musk);
 
         // Path: WETH → AK
         address[] memory path = new address[](2);
@@ -735,13 +614,10 @@ contract UniswapV2IntegrationTestViaRouter is Test {
 
         vm.stopPrank();
 
-        uint postAKBalance = IERC20(AK).balanceOf(musk);
+        uint256 postAKBalance = IERC20(AK).balanceOf(musk);
         assertEq(postAKBalance - preAKBalance, 10 ether, "AK not received");
 
-        console2.log(
-            "AK received from ETHAK swap:",
-            postAKBalance - preAKBalance
-        );
+        console2.log("AK received from ETHAK swap:", postAKBalance - preAKBalance);
     }
 
     function testSwapETHForExactTokens_MultiPath() public {
@@ -778,7 +654,7 @@ contract UniswapV2IntegrationTestViaRouter is Test {
 
         // 3️⃣ Musk swaps ETH → USDC → AK
         vm.startPrank(musk);
-        uint preAKBalance = IERC20(AK).balanceOf(musk);
+        uint256 preAKBalance = IERC20(AK).balanceOf(musk);
 
         // Path: WETH → USDC → AK
         address[] memory path = new address[](3);
@@ -796,20 +672,18 @@ contract UniswapV2IntegrationTestViaRouter is Test {
 
         vm.stopPrank();
 
-        uint postAKBalance = IERC20(AK).balanceOf(musk);
+        uint256 postAKBalance = IERC20(AK).balanceOf(musk);
         assertEq(postAKBalance - preAKBalance, 5 ether, "AK not received");
 
-        console2.log(
-            "AK received from ETHUSDCAK swap:",
-            postAKBalance - preAKBalance
-        );
+        console2.log("AK received from ETHUSDCAK swap:", postAKBalance - preAKBalance);
     }
 
-    function _signForApprovalByDeployer(
-        address _pair,
-        uint256 value
-    ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
-        uint ownerPrivateKey = deploy.deployerPrivateKey();
+    function _signForApprovalByDeployer(address _pair, uint256 value)
+        internal
+        view
+        returns (uint8 v, bytes32 r, bytes32 s)
+    {
+        uint256 ownerPrivateKey = deploy.deployerPrivateKey();
         address owner = deployer;
         address spender = address(router);
 
@@ -817,24 +691,14 @@ contract UniswapV2IntegrationTestViaRouter is Test {
         uint256 deadline = _getDeadlineAfter20Minutes();
 
         bytes32 DOMAIN_SEPARATOR = UniswapV2Pair(_pair).DOMAIN_SEPARATOR();
-        bytes32 PERMIT_TYPEHASH = keccak256(
-            "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-        );
+        bytes32 PERMIT_TYPEHASH =
+            keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
         bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
                 DOMAIN_SEPARATOR,
-                keccak256(
-                    abi.encode(
-                        PERMIT_TYPEHASH,
-                        owner,
-                        spender,
-                        value,
-                        nonce,
-                        deadline
-                    )
-                )
+                keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, nonce, deadline))
             )
         );
 
